@@ -23,7 +23,6 @@
                             <strong>Bot Masjid:</strong> Assalamu'alaikum, ada yang bisa saya bantu? Anda dapat bertanya tentang donasi pembangunan, donasi harian, donasi operasional, zakat mal, zakat fitrah, antrian qurban, atau kegiatan masjid.
                         </div>
                     </div>
-                    <!-- Messages will be added here dynamically -->
                 </div>
                 <div id="quick-replies" class="mb-3 d-flex flex-wrap">
                     <button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickReply('donasi pembangunan')">Donasi Pembangunan</button>
@@ -43,7 +42,6 @@
     </div>
 </div>
 
-<!-- Loading indicator -->
 <div id="loading-indicator" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;">
     <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
@@ -53,96 +51,75 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function() {
-        // Send message when send button is clicked
         $('#send-button').on('click', function() {
             sendMessage();
         });
 
-        // Send message when Enter key is pressed
         $('#message-input').on('keypress', function(e) {
             if (e.which === 13) {
                 sendMessage();
             }
         });
 
-        // Initial setup - scroll to bottom of chat
         scrollToBottom();
     });
 
-    // Function to send message
     function sendMessage() {
         const messageInput = $('#message-input');
         const message = messageInput.val().trim();
         
         if (message) {
-            // Add user message to chat
             addUserMessage(message);
-            
-            // Clear input
             messageInput.val('');
-            
-            // Process the message
             processMessage(message);
         }
     }
 
-    // Function to send quick reply
     function sendQuickReply(message) {
-        // Add user message to chat
         addUserMessage(message);
-        
-        // Process the message
         processMessage(message);
     }
 
-    // Function to add user message to chat
     function addUserMessage(message) {
-        const messageHtml = 
-            `<div class="user-message mb-2 text-end">
+        const messageHtml = `
+            <div class="user-message mb-2 text-end">
                 <div class="message-content p-2 rounded bg-primary text-white d-inline-block">
                     <strong>Anda:</strong> ${message}
                 </div>
-            </div>`;
-        
+            </div>
+        `;
         $('#chat-messages').append(messageHtml);
         scrollToBottom();
     }
 
-    // Function to add bot message to chat
     function addBotMessage(response) {
-        const messageHtml = 
-            `<div class="bot-message mb-2">
+        let messageHtml = `
+            <div class="bot-message mb-2">
                 <div class="message-content p-2 rounded bg-light">
                     <strong>Bot Masjid:</strong> ${response.text}
                 </div>
-            </div>`;
-        
+            </div>
+        `;
         $('#chat-messages').append(messageHtml);
-        
-        // Clear existing quick replies
+
         $('#quick-replies').empty();
         
-        // Add new quick replies/options if available
         if (response.options && response.options.length > 0) {
             response.options.forEach(option => {
                 let button;
-                
                 if (option.action === 'reply') {
                     button = `<button class="btn btn-sm btn-outline-primary m-1" onclick="sendQuickReply('${option.message}')">${option.text}</button>`;
                 } else if (option.action === 'redirect') {
                     button = `<a href="${option.url}" class="btn btn-sm btn-outline-success m-1">${option.text}</a>`;
                 }
-                
                 $('#quick-replies').append(button);
             });
         }
-        
+
         scrollToBottom();
     }
 
-    // Function to process the message via AJAX
     function processMessage(message) {
-        // Show loading indicator
         $('#loading-indicator').show();
         
         $.ajax({
@@ -153,32 +130,41 @@
                 message: message
             },
             success: function(data) {
-                // Hide loading indicator
                 $('#loading-indicator').hide();
-                
-                // Add bot response to chat
-                addBotMessage(data.response);
+                addBotMessage(data);
             },
             error: function(error) {
-                // Hide loading indicator
                 $('#loading-indicator').hide();
-                
-                // Add error message to chat
-                const errorResponse = {
-                    text: 'Maaf, terjadi kesalahan. Silakan coba lagi nanti.',
-                    options: []
-                };
+                const errorResponse = { text: 'Maaf, terjadi kesalahan. Silakan coba lagi nanti.', options: [] };
                 addBotMessage(errorResponse);
-                
                 console.error('Error:', error);
             }
         });
     }
 
-    // Function to scroll to bottom of chat
     function scrollToBottom() {
         const chatMessages = document.getElementById('chat-messages');
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
+
+    fetch('/chatbot/process', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    },
+    body: JSON.stringify({ message: userMessage })
+})
+.then(response => response.json())
+.then(data => {
+    showMessage(data.text); // tampilkan pesan balasan ke UI
+
+    if (data.redirect_url) {
+        setTimeout(() => {
+            window.location.href = data.redirect_url;
+        }, 2000); // delay 2 detik agar user bisa baca pesan dulu
+    }
+});
+
 </script>
 @endsection
