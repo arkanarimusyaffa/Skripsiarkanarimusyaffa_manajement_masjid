@@ -93,5 +93,4 @@ Route::middleware(['auth'])->group(function () {
     // Bidang Perlengkapan Dashboard
     Route::get('/dashboard/bidang-perlengkapan', [DashboardController::class, 'bidangPerlengkapan'])->name('dashboard.bidang perlengkapan');
 });
-
-Route::post('/chatbot/process', [ChatbotController::class, 'process']);
+Route::post('/chatbot/process', [App\Http\Controllers\ChatbotController::class, 'process']);

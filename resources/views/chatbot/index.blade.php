@@ -97,13 +97,12 @@
 
     // Function to add user message to chat
     function addUserMessage(message) {
-        const messageHtml = `
-            <div class="user-message mb-2 text-end">
+        const messageHtml = 
+            `<div class="user-message mb-2 text-end">
                 <div class="message-content p-2 rounded bg-primary text-white d-inline-block">
                     <strong>Anda:</strong> ${message}
                 </div>
-            </div>
-        `;
+            </div>`;
         
         $('#chat-messages').append(messageHtml);
         scrollToBottom();
@@ -111,13 +110,12 @@
 
     // Function to add bot message to chat
     function addBotMessage(response) {
-        let messageHtml = `
-            <div class="bot-message mb-2">
+        const messageHtml = 
+            `<div class="bot-message mb-2">
                 <div class="message-content p-2 rounded bg-light">
                     <strong>Bot Masjid:</strong> ${response.text}
                 </div>
-            </div>
-        `;
+            </div>`;
         
         $('#chat-messages').append(messageHtml);
         
@@ -183,4 +181,4 @@
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 </script>
-@endsection 
+@endsection

@@ -7,35 +7,42 @@ use Illuminate\Support\Facades\Http;
 
 class ChatbotController extends Controller
 {
+    public function index()
+    {
+        return view('chatbot.index'); // Or whatever response/view you intend
+    }
     public function process(Request $request)
     {
-        $userMessage = $request->input('message');
+        $message = strtolower($request->input('message'));
+        $response = $this->generateResponse($message);
 
-        // Kirim ke OpenAI GPT
-        $response = Http::withToken(env('OPENAI_API_KEY'))
-            ->post('https://api.openai.com/v1/chat/completions', [
+        return response()->json([
+            'response' => $response
+        ]);
+    }
+
+    private function generateResponse($message)
+    {
+        $client = new \GuzzleHttp\Client();
+        $response = $client->post('https://api.openai.com/v1/chat/completions', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . env('OPENAI_API_KEY'),
+                'Content-Type' => 'application/json'
+            ],
+            'json' => [
                 'model' => 'gpt-3.5-turbo',
                 'messages' => [
-                    [
-                        'role' => 'system',
-                        'content' => 'Anda adalah asisten virtual masjid yang sopan dan informatif. Jawab pertanyaan tentang donasi, zakat, qurban, dan kegiatan masjid.'
-                    ],
-                    [
-                        'role' => 'user',
-                        'content' => $userMessage
-                    ]
+                    ['role' => 'system', 'content' => 'Kamu adalah asisten masjid. Jawablah secara singkat dan ramah.'],
+                    ['role' => 'user', 'content' => $message]
                 ],
-                'temperature' => 0.7,
-            ]);
-
-        $botReply = $response->json()['choices'][0]['message']['content'];
-
-        // Format respons ke frontend
-        return response()->json([
-            'response' => [
-                'text' => nl2br($botReply),
-                'options' => [] // Tambahkan jika ingin opsi tombol tambahan
+                'temperature' => 0.7
             ]
         ]);
+
+        $body = json_decode($response->getBody(), true);
+        return [
+            'text' => $body['choices'][0]['message']['content'],
+            'options' => []
+        ];
     }
 }
