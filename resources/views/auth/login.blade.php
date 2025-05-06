@@ -5,14 +5,14 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-6">
-        <div class="card auth-card">
+        <div class="card auth-card shadow-sm">
             <div class="card-header bg-primary text-white">
                 <h4 class="mb-0">Login</h4>
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
-                    
+
                     <div class="mb-3">
                         <label for="username" class="form-label">Username or Email</label>
                         <input type="text" class="form-control @error('username') is-invalid @enderror" id="username" name="username" value="{{ old('username') }}" required autofocus>
@@ -45,4 +45,24 @@
         </div>
     </div>
 </div>
-@endsection 
+@endsection
+<style>
+    .auth-card {
+    margin-top: 80px;
+    border-radius: 10px;
+}
+
+.card-header {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.card-footer {
+    background-color: #f8f9fa;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+    </style>

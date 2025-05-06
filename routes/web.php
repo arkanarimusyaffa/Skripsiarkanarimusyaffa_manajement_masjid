@@ -101,3 +101,14 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/chatbot/process', [ChatbotController::class, 'processMessage']);
 Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
 Route::post('/chatbot', [ChatbotController::class, 'processMessage'])->name('chatbot.process');
+// routes/web.php
+
+use App\Http\Controllers\PertanyaanJawabanController;
+
+Route::get('/admin/pertanyaan', [PertanyaanJawabanController::class, 'create']);
+Route::post('/admin/pertanyaan', [PertanyaanJawabanController::class, 'store'])->name('pertanyaan.store');
+
+Route::get('/chat', function () {
+    return view('chat');
+});
+Route::post('/chat/send', [ChatbotController::class, 'send']);
