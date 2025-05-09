@@ -75,12 +75,12 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header bg-secondary text-white">
-                <h5 class="mb-0">Chatbot Masjid</h5>
+                <h5 class="mb-0">Customer service</h5>
             </div>
             <div class="card-body">
-                <p>Tanyakan informasi tentang donasi, zakat, qurban, dan kegiatan masjid melalui chatbot.</p>
+                <p>berikan informasi keluhan</p>
                 <div class="text-center">
-                    <a href="{{ route('chatbot.index') }}" class="btn btn-outline-secondary">Buka Chatbot</a>
+                    <a href="{{ route('chat.index') }}" class="btn btn-outline-secondary">Buka Chatbot</a>
                 </div>
             </div>
         </div>

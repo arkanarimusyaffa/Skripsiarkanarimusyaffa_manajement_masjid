@@ -104,6 +104,9 @@ Route::post('/chatbot', [ChatbotController::class, 'processMessage'])->name('cha
 // routes/web.php
 
 use App\Http\Controllers\PertanyaanJawabanController;
+use App\Models\Keluhan;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/admin/pertanyaan', [PertanyaanJawabanController::class, 'create']);
 Route::post('/admin/pertanyaan', [PertanyaanJawabanController::class, 'store'])->name('pertanyaan.store');
@@ -112,3 +115,18 @@ Route::get('/chat', function () {
     return view('chat');
 });
 Route::post('/chat/send', [ChatbotController::class, 'send']);
+
+Route::post('/chatbot', [ChatbotController::class, 'processMessage']);
+Route::post('/chatbot/process', [ChatbotController::class, 'process']);
+
+use App\Http\Controllers\ChatController;
+
+// routes/web.php
+
+Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
+Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
+
+
+
+Route::get('/complaint', [ChatController::class, 'showComplaintForm'])->name('complaint.form');
+Route::post('/complaint', [ChatController::class, 'submitComplaint'])->name('complaint.submit');
